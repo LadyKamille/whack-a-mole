@@ -1,17 +1,49 @@
 import { Board } from '../../components/Board/Board';
 import { Timer } from '../../components/Timer/Timer';
 import styles from './Game.module.css';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { ISquare } from '../../components/Square/Square.interface';
 
 const GAME__LENGTH_SECONDS = 30;
 
 export const Game = () => {
+  const grid = Array.from(Array(9),
+    (_, index) => ({id: index + 1, hasMole: false}));
+  let moleInterval = useRef<number>();
+  let timeInterval = useRef<number>();
   const [seconds, setSeconds] = useState(GAME__LENGTH_SECONDS);
   const [isActive, setIsActive] = useState(false);
+  const [squares, setSquares] = useState(grid);
+  const [molesShowing, setMolesShowing] = useState(0);
+
+  const clearIntervals = () => {
+    window.clearInterval(moleInterval.current);
+    window.clearInterval(timeInterval.current);
+  };
 
   const reset = () => {
     setSeconds(GAME__LENGTH_SECONDS);
     setIsActive(false);
+  };
+
+  const setHasMole = (item: ISquare): void => {
+    setSquares(
+      squares.map((square: ISquare) => (
+        item.id === square.id ? item : square
+      ))
+    );
+  };
+
+  const toggleRandomMole = (): void => {
+    const randomIndex = Math.floor(Math.random() * 9);
+    const mole = squares[randomIndex];
+    if (!squares[randomIndex].hasMole && molesShowing < 3) {
+      setMolesShowing(molesShowing + 1);
+      setHasMole({...mole, ...{hasMole: true}});
+    } else {
+      setMolesShowing(molesShowing - 1);
+      setHasMole({...mole, ...{hasMole: false}});
+    }
   };
 
   const toggle = () => {
@@ -19,28 +51,28 @@ export const Game = () => {
   };
 
   useEffect(() => {
-    let interval: NodeJS.Timeout;
     if (isActive) {
-      interval = setInterval(() => {
+      moleInterval.current = window.setInterval(toggleRandomMole, 1000);
+      timeInterval.current = window.setInterval(() => {
         if (seconds > 0) {
           setSeconds(seconds => seconds - 1);
         }
 
         if (seconds === 0) {
           setIsActive(false);
-          clearInterval(interval);
+          clearIntervals();
         }
       }, 1000);
     }
     // @ts-ignore
-    else if (!isActive && seconds !== 0 && interval) {
-      clearInterval(interval);
+    else if (!isActive && seconds !== 0) {
+      clearIntervals()
     }
-    return () => clearInterval(interval);
+    return () => clearIntervals();
   }, [isActive, seconds]);
 
   return <div className={ styles.game }>
-    <Board/>
+    <Board squares={squares} onSquareClick={setHasMole} />
     <Timer isActive={isActive} seconds={seconds} toggle={toggle} reset={reset}/>
   </div>
 };
