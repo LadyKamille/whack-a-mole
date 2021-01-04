@@ -1,0 +1,13 @@
+div.board {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: flex-end;
+  width: 50%;
+  margin: 0 auto;
+}
+
+div.board button {
+  flex: 0 0 32%;
+  margin: 20px 5px;
+}

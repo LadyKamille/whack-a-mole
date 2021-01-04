@@ -1,0 +1,13 @@
+button.square {
+  background: transparent;
+  border: 0;
+}
+
+button.square img {
+  width: 60px;
+  height: 60px;
+}
+
+button.square img.emptyHole {
+  height: 15px;
+}
