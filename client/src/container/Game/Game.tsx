@@ -4,7 +4,7 @@ import styles from './Game.module.css';
 import { useEffect, useRef, useState } from 'react';
 import { ISquare } from '../../components/Square/Square.interface';
 
-const GAME__LENGTH_SECONDS = 30;
+const GAME_LENGTH_SECONDS = 30;
 
 export const Game = () => {
   const grid = Array.from(
@@ -13,7 +13,8 @@ export const Game = () => {
   );
   let moleInterval = useRef<number>();
   let timeInterval = useRef<number>();
-  const [seconds, setSeconds] = useState(GAME__LENGTH_SECONDS);
+  const [score, setScore] = useState(0);
+  const [seconds, setSeconds] = useState(GAME_LENGTH_SECONDS);
   const [isActive, setIsActive] = useState(false);
   const [squares, setSquares] = useState(grid);
   const [molesShowing, setMolesShowing] = useState(0);
@@ -24,7 +25,7 @@ export const Game = () => {
   };
 
   const reset = () => {
-    setSeconds(GAME__LENGTH_SECONDS);
+    setSeconds(GAME_LENGTH_SECONDS);
     setIsActive(false);
     setMolesShowing(0);
     setSquares(
@@ -40,6 +41,12 @@ export const Game = () => {
         item.id === square.id ? item : square
       ))
     );
+  };
+
+  const onSquareClick = (square: ISquare): void => {
+    setMolesShowing(molesShowing -1);
+    setHasMole({...square, ...{hasMole: false}});
+    setScore(score + 1);
   };
 
   const setTimer = () => {
@@ -81,7 +88,9 @@ export const Game = () => {
 
   return (
     <div className={ styles.game }>
-      <Board squares={ squares } onSquareClick={ setHasMole }/>
+      <h1>Whack-A-Mole</h1>
+      <h2>Player Score: {score}</h2>
+      <Board squares={ squares } onSquareClick={ onSquareClick }/>
       <Timer isActive={ isActive } seconds={ seconds } toggle={ toggle } reset={ reset }/>
     </div>
   );
