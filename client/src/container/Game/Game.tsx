@@ -1,8 +1,8 @@
+import { useEffect, useRef, useState } from 'react';
 import { Board } from '../../components/Board/Board';
 import { Timer } from '../../components/Timer/Timer';
-import styles from './Game.module.css';
-import { useEffect, useRef, useState } from 'react';
 import { ISquare } from '../../components/Square/Square.interface';
+import styles from './Game.module.css';
 
 const GAME_LENGTH_SECONDS = 30;
 
