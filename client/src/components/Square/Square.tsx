@@ -1,13 +1,15 @@
-import { useState } from 'react';
 import styles from './Square.module.css';
+import { ISquareProps } from './Square.interface';
 
-export const Square = ({ hasMole }: { hasMole: boolean }) => {
-  const [mole, setMole] = useState(hasMole);
+export const Square = ({ mole, onClickHandler}: ISquareProps) => {
+  const onMoleClick = () => {
+    onClickHandler({...mole, ...{hasMole: !mole.hasMole}});
+  };
 
   return <button className={ styles.square }>
     {
-      mole ?
-        <img src="/mole.png" alt="mole" onClick={ () => setMole(!mole) }/> :
+      mole.hasMole ?
+        <img src="/mole.png" alt="mole" onClick={onMoleClick}/> :
         <img src="/mole_hole.png" alt="empty mole hole" className={styles.emptyHole}/>
     }
   </button>;
